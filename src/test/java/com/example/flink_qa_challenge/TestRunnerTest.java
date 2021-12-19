@@ -16,13 +16,14 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 public class TestRunnerTest {
-    HomePage homePage = new HomePage();
-    SunscreenPage sunscreenPage = new SunscreenPage();
+    HomePageTest homePageTest = new HomePageTest();
+    SunscreenPageTest sunscreenPageTest = new SunscreenPageTest();
 
     @BeforeClass
     public static void setUpAll() {
-        Configuration.browserSize = "1280x800";
+        Configuration.browserSize = "1400x900";
         Configuration.browser = "firefox";
+        Configuration.headless = true;
         SelenideLogger.addListener("allure", new AllureSelenide());
     }
 
@@ -38,9 +39,8 @@ public class TestRunnerTest {
 
     @Test
     @Description("The user access the homepage website and depending on the temperature will purchase different elements")
-    public void userDecidesProductPurchaseHomePage(){
-        homePage.getTemperatureAndAccessShop();
-        sunscreenPage.getValuesFromProducts();
+    public void userDecidesProductPurchaseHomePage() throws InterruptedException {
+        homePageTest.userDecidesProductPurchaseHomePage();
     }
 
 }

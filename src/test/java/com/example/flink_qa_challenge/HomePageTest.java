@@ -16,6 +16,8 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class HomePageTest {
     HomePage homepage = new HomePage();
+    SunscreenPage sunscreenPage = new SunscreenPage();
+    MoisturizerPage moisturizerPage = new MoisturizerPage();
     @BeforeClass
     public static void setUpAll() {
         Configuration.browserSize = "1280x800";
@@ -36,7 +38,25 @@ public class HomePageTest {
     @Test
     @Description("The user access the homepage website and depending on the temperature will purchase different elements")
     public void userDecidesProductPurchaseHomePage(){
-        homepage.getTemperatureAndAccessShop();
+
+        String shopAccessed = homepage.getTemperatureAndAccessShop();
+        switch (shopAccessed){
+            case "sunscreens":
+                sunscreenPage.getValuesFromProductsAndAddToCart();
+                sunscreenPage.accessCart();
+                sunscreenPage.purchaseItems();
+                break;
+
+            case "moisturizers":
+                moisturizerPage.getValuesFromProductsAndAddToCart();
+                moisturizerPage.accessCart();
+                moisturizerPage.purchaseItems();
+                break;
+            default:
+                break;
+        }
+
+
     }
 
 

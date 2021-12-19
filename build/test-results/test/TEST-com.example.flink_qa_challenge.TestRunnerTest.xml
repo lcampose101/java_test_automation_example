@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.flink_qa_challenge.TestRunnerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-12-19T23:39:32" hostname="luis-zymewire" time="4.523">
+  <properties/>
+  <testcase name="userDecidesProductPurchaseHomePage" classname="com.example.flink_qa_challenge.TestRunnerTest" time="4.523"/>
+  <system-out><![CDATA[vassily brilliant spf-30
+gary bio sandalwood spf-50
+order successful
+]]></system-out>
+  <system-err><![CDATA[[Test worker] INFO com.codeborne.selenide.drivercommands.CloseDriverCommand - Close webdriver: 1 -> ChromeDriver: chrome on LINUX (55caf173e13f2a5d41e74ee6927b84dd)...
+[Test worker] INFO com.codeborne.selenide.drivercommands.CloseDriverCommand - Closed webdriver 1 in 80 ms
+]]></system-err>
+</testsuite>

@@ -1,5 +1,6 @@
 package com.example.flink_qa_challenge;
 
+import com.codeborne.selenide.Config;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideDriver;
@@ -19,25 +20,22 @@ public class SunscreenPageTest {
 
     @BeforeClass
     public static void setUpAll() {
-        Configuration.browserSize = "1280x800";
+        Configuration.browserSize="1366x900";
         Configuration.browser = "firefox";
+        Configuration.headless = true;
         SelenideLogger.addListener("allure", new AllureSelenide());
     }
-
     @BeforeSuite
     public void setUp() {
         open("https://weathershopper.pythonanywhere.com/sunscreen");
     }
 
-    @AfterMethod
-    public void tearDown(){
-        Selenide.closeWebDriver();
-    }
-
     @Test
     @Description("Access the elements in the page and add them to the cart")
     public void addSunscreenToCart(){
-        sunscreenPage.getValuesFromProducts();
+        sunscreenPage.getValuesFromProductsAndAddToCart();
+        sunscreenPage.accessCart();
+        sunscreenPage.purchaseItems();
     }
 
 

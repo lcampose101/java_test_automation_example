@@ -1,4 +1,5 @@
 package com.example.flink_qa_challenge;
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
@@ -7,11 +8,13 @@ import io.qameta.allure.selenide.AllureSelenide;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.*;
 
 import java.io.IOException;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import static com.codeborne.selenide.Condition.*;
 import static org.testng.Assert.*;
@@ -21,26 +24,254 @@ import static com.codeborne.selenide.Selenide.*;
 public class SunscreenPage {
 
 
-
+//Variables that house the css selectors for the products on the page, as well as an array for use inside the getValuesFromProductsAndAddToCart method
 private SelenideElement sunscreenProduct1 = $(By.cssSelector("div.row:nth-child(2) > div:nth-child(1)"));
 private SelenideElement sunscreenProduct2  =$(By.cssSelector("div.row:nth-child(2) > div:nth-child(3)"));
 private SelenideElement sunscreenProduct3 = $(By.cssSelector("div.text-center:nth-child(5)"));
 private SelenideElement sunscreenProduct4 = $(By.cssSelector("div.row:nth-child(3) > div:nth-child(1)"));
 private SelenideElement sunscreenProduct5 = $(By.cssSelector("div.text-center:nth-child(2)"));
 private SelenideElement sunscreenProduct6 = $(By.cssSelector("div.row:nth-child(3) > div:nth-child(3)"));
+public ArrayList<SelenideElement> allProductElements = new ArrayList<>();
 
-public void getValuesFromProducts(){
-        String sunscreenProduct1Text = sunscreenProduct1.getText();
-        String sunscreenProduct2Text = sunscreenProduct2.getText();
-        String sunscreenProduct3Text = sunscreenProduct3.getText();
-        String sunscreenProduct4Text = sunscreenProduct4.getText();
-        String sunscreenProduct5Text = sunscreenProduct5.getText();
-        String sunscreenProduct6Text = sunscreenProduct6.getText();
+//Variables that house selectors for the cart screen
+private SelenideElement cartBtn = $(By.xpath("//button[@onclick='goToCart()']"));
+private SelenideElement firstRowCheckout = $(By.cssSelector(".table > tbody:nth-child(2) > tr:nth-child(1)"));
+private SelenideElement secondRowCheckout = $(By.cssSelector(".table > tbody:nth-child(2) > tr:nth-child(2)"));
+private SelenideElement payWithCardBtn = $(By.xpath("//span[contains(.,'Pay with Card')]"));
 
-        String sunscreenPriceP1 = sunscreenProduct1.getAttribute("onclick");
-        System.out.println(sunscreenProduct1Text);
-        System.out.println(sunscreenPriceP1);
+//Variables that are used for comparisons between methods outputs
+String firstItemRowCheckout = "";
+String secondItemRowCheckout="";
+String priceFirstItemRowCheckout = "";
+String priceSecondItemRowCheckout = "";
+ArrayList<String> itemsReadyForCheckout = new ArrayList<>();
 
+//Variables for the Stripe form test
+String stripeFrameID = "https://checkout.stripe.com/v3/k7NvLmX7CQ4t5S85kQXOg.html?distinct_id=7dfe440b-95fc-5a39-5527-ad6dcecd527e";
+private String testEmail = "luis.test@testscript.com";
+private SelenideElement emailFieldStripeForm = $(By.xpath("//input[@type='email']"));
+private SelenideElement cardNumberFieldStripeForm = $(By.xpath("//input[contains(@placeholder,'Card number')]"));
+private SelenideElement monthDayFieldStripeForm = $(By.xpath("//input[@placeholder='MM / YY']"));
+private SelenideElement cvcFieldStripeForm = $(By.xpath("//input[@placeholder='CVC']"));
+private SelenideElement payTotal = $(By.xpath("//span[@class='iconTick']"));
+private String  testCardStrip = "4242424242424242";
+private String cardBrand = "Visa";
+private String expirationDates= "0224";
+private String cvcCard = "003";
+
+public String getTitlesFromProducts(SelenideElement element){
+        String productName = element.find(By.className("font-weight-bold")).getText();
+        return productName;
+}
+
+public String getTitlesFromProductsCheckout(SelenideElement element ){
+        String productName = element.find(By.tagName("td")).getText();
+        return productName;
+}
+public int getPricesFromProducts(SelenideElement element){
+        List<WebElement> pTagElements = element.findElements(By.tagName("p"));
+        WebElement elementWithPrice = pTagElements.get(1);
+        String strPriceOfProduct  = elementWithPrice.getText();
+        strPriceOfProduct = strPriceOfProduct.toLowerCase();
+        strPriceOfProduct = strPriceOfProduct.replace("price:","");
+        strPriceOfProduct = strPriceOfProduct.replace("rs","");
+        strPriceOfProduct = strPriceOfProduct.replace(".","");
+        strPriceOfProduct = strPriceOfProduct.replace(" ","");
+        int intPriceOfProduct = Integer.parseInt(strPriceOfProduct);
+        return intPriceOfProduct;
+
+}
+
+public SelenideElement compareProducts(SelenideElement element, String productToBuy){
+        SelenideElement elementMatched = null;
+        String sunscreenProductText = getTitlesFromProducts(element);
+        sunscreenProductText = sunscreenProductText.toLowerCase();
+        if(sunscreenProductText.contains(productToBuy)){
+                elementMatched = element;
+        }
+        return  elementMatched;
+}
+public void getValuesFromProductsAndAddToCart(){
+
+        //Adding all of the SelenidElements that will be utilized for a comparison at the end of the script
+        allProductElements.add(sunscreenProduct1);
+        allProductElements.add(sunscreenProduct2);
+        allProductElements.add(sunscreenProduct3);
+        allProductElements.add(sunscreenProduct4);
+        allProductElements.add(sunscreenProduct5);
+        allProductElements.add(sunscreenProduct6);
+
+        //Get the titles of each product element for further comparisons
+        String sunscreenProduct1Text = getTitlesFromProducts(sunscreenProduct1);
+        String sunscreenProduct2Text = getTitlesFromProducts(sunscreenProduct2);
+        String sunscreenProduct3Text = getTitlesFromProducts(sunscreenProduct3);
+        String sunscreenProduct4Text = getTitlesFromProducts(sunscreenProduct4);
+        String sunscreenProduct5Text = getTitlesFromProducts(sunscreenProduct5);
+        String sunscreenProduct6Text = getTitlesFromProducts(sunscreenProduct6);
+
+        //Get the price of each product element for further comparisons
+        getPricesFromProducts(sunscreenProduct1);
+        int priceProduct1 = getPricesFromProducts(sunscreenProduct1);
+        int priceProduct2 = getPricesFromProducts(sunscreenProduct2);
+        int priceProduct3 = getPricesFromProducts(sunscreenProduct3);
+        int priceProduct4 = getPricesFromProducts(sunscreenProduct4);
+        int priceProduct5 = getPricesFromProducts(sunscreenProduct5);
+        int priceProduct6 = getPricesFromProducts(sunscreenProduct6);
+
+
+        //Unsorted Hashmap
+        HashMap<String,Integer> allSunscreenProducts = new HashMap<>();
+        allSunscreenProducts.put(sunscreenProduct1Text.toLowerCase(),priceProduct1);
+        allSunscreenProducts.put(sunscreenProduct2Text.toLowerCase(),priceProduct2);
+        allSunscreenProducts.put(sunscreenProduct3Text.toLowerCase(),priceProduct3);
+        allSunscreenProducts.put(sunscreenProduct4Text.toLowerCase(),priceProduct4);
+        allSunscreenProducts.put(sunscreenProduct5Text.toLowerCase(),priceProduct5);
+        allSunscreenProducts.put(sunscreenProduct6Text.toLowerCase(), priceProduct6);
+
+        //HashMaps that will contain the filtered values of the sunscreens and the numbers they are
+        HashMap<String,Integer> sunscreenSPF30 = new HashMap<>();
+        HashMap<String,Integer> sunscreensSPF50 = new HashMap<>();
+
+        allSunscreenProducts.forEach(
+                (key,value)
+                -> {
+                        if (key.contains("spf-30")) {
+                                sunscreenSPF30.put(key,value);
+                        }else{
+                                if (key.contains("spf-50")){
+                                        sunscreensSPF50.put(key,value);
+                                }
+                        }
+                }
+        );
+
+        //Traversing through the Hashmap to retrieve the name of the sunscreen with the lowest price for spf30
+        Map.Entry<String,Integer> minSPF30 = null;
+        for (Map.Entry<String,Integer> entry:sunscreenSPF30.entrySet()){
+                if(minSPF30 ==null ||  minSPF30.getValue() > entry.getValue()){
+                        minSPF30 = entry;
+                }
+        }
+
+        //Traversing through the Hashmap to retrieve the name of the sunscreen with the lowest price for spf50
+        Map.Entry<String,Integer> minSPF50 = null;
+        for (Map.Entry<String,Integer> entry:sunscreensSPF50.entrySet()){
+                if(minSPF50 ==null ||  minSPF50.getValue() > entry.getValue()){
+                        minSPF50 = entry;
+                }
+        }
+
+        String nameOfProductToAddSPF30 = minSPF30.getKey();
+        String nameOfProductToAddSPF50 = minSPF50.getKey();
+        System.out.println(nameOfProductToAddSPF30);
+        System.out.println(nameOfProductToAddSPF50);
+        firstItemRowCheckout = nameOfProductToAddSPF30.toLowerCase();
+        secondItemRowCheckout = nameOfProductToAddSPF50.toLowerCase();
+        priceFirstItemRowCheckout = minSPF30.getValue().toString().toLowerCase();
+        priceSecondItemRowCheckout = minSPF50.getValue().toString().toLowerCase();
+        SelenideElement spf30ProductSelected = null;
+        SelenideElement spf50ProductSelected = null;
+        int indexOfElementMatchedSPF30 = 0;
+        int indexOfElementMatchedSPF50 = 0;
+
+        for(int i = 0; i<allProductElements.size(); i++){
+                SelenideElement resultElement = compareProducts(allProductElements.get(i),nameOfProductToAddSPF30);
+                if (resultElement!= null){
+                        spf30ProductSelected = resultElement;
+                        indexOfElementMatchedSPF30 = i;
+                        break;
+                }
+
+        }
+        for(int i = 0; i<allProductElements.size(); i++){
+                SelenideElement resultElement = compareProducts(allProductElements.get(i),nameOfProductToAddSPF50);
+                if (resultElement!= null){
+                        spf50ProductSelected = resultElement;
+                        indexOfElementMatchedSPF50=i;
+                        break;
+                }
+
+        }
+
+        try {
+                spf30ProductSelected.scrollIntoView(true);
+                String exactStringOfElementSPF30 = getTitlesFromProducts(spf30ProductSelected);
+                SelenideElement interProductSPF30 = $(By.xpath("//p[@class='font-weight-bold top-space-10'][contains(.,'"+exactStringOfElementSPF30+"')]"));
+                SelenideElement addButtonSPF30 = $(By.xpath("(//button[@class='btn btn-primary'][contains(.,'Add')])["+indexOfElementMatchedSPF30+"]"));
+                interProductSPF30.click();
+                addButtonSPF30.scrollIntoView(true);
+                addButtonSPF30.shouldBe(visible);
+                addButtonSPF30.click();
+
+                spf50ProductSelected.scrollIntoView(true);
+                String exactStringOfElementSPF50 = getTitlesFromProducts(spf30ProductSelected);
+                SelenideElement interProductSPF50 = $(By.xpath("//p[@class='font-weight-bold top-space-10'][contains(.,'"+exactStringOfElementSPF50+"')]"));
+                SelenideElement addButtonSPF50 = $(By.xpath("(//button[@class='btn btn-primary'][contains(.,'Add')])["+indexOfElementMatchedSPF50+"]"));
+                interProductSPF50.click();
+                addButtonSPF50.scrollIntoView(true);
+                addButtonSPF50.shouldBe(visible);
+                addButtonSPF50.click();
+
+        } catch (Exception error){
+                System.out.println(error);
+        }
+}
+public boolean checkoutPricesCorrect(SelenideElement element, SelenideElement element2){
+        boolean pricesCorrect = false;
+        itemsReadyForCheckout.add(element.getText());
+        itemsReadyForCheckout.add(element2.getText());
+
+        if (itemsReadyForCheckout.contains(priceFirstItemRowCheckout)){
+                if (itemsReadyForCheckout.contains(priceSecondItemRowCheckout)){
+                        pricesCorrect = true;
+                }
+        }
+        return pricesCorrect;
+}
+public boolean checkoutItemsCorrect(SelenideElement element, SelenideElement element2){
+        boolean productsCorrect = false;
+        String productNameFirstRow = getTitlesFromProductsCheckout(element).toLowerCase();
+        String productNameSecondRow = getTitlesFromProductsCheckout(element2).toLowerCase();
+        itemsReadyForCheckout.add(productNameFirstRow);
+        itemsReadyForCheckout.add(productNameSecondRow);
+        System.out.println(productNameFirstRow);
+        System.out.println(firstItemRowCheckout);
+
+        if (itemsReadyForCheckout.contains(firstItemRowCheckout)){
+                productsCorrect = true;
+        }
+        return productsCorrect;
+}
+public void accessCart(){
+        if (cartBtn.isDisplayed()){
+                try {
+                        
+                        cartBtn.click();
+                        payWithCardBtn.click();
+
+                }catch (Exception error){
+                        System.out.println(error);
+                }
+        }
+}
+public void purchaseItems(){
+        Selenide.switchTo().frame(0);
+        String itemsPurchased = "";
+        emailFieldStripeForm.shouldBe(visible);
+        if (emailFieldStripeForm.isDisplayed()){
+                try{
+                        emailFieldStripeForm.sendKeys(testEmail);
+                        cardNumberFieldStripeForm.sendKeys(testCardStrip);
+                        monthDayFieldStripeForm.sendKeys(expirationDates);
+                        cvcFieldStripeForm.sendKeys(cvcCard);
+                        payTotal.click();
+                        itemsPurchased = "order successful";
+
+                }catch(Exception error){
+
+                }
+                System.out.println(itemsPurchased);
+        }
 }
 }
 

@@ -20,7 +20,7 @@ public class HomePage {
 
     public int convertTemperature(String temperature){
         String sliced_temperature = temperature.substring(0,2);
-        int temperature_for_comparison = Integer.parseInt(sliced_temperature);
+        int temperature_for_comparison = Integer.parseInt(sliced_temperature.trim());
         return temperature_for_comparison;
     }
     public String getTemperatureAndAccessShop(){
