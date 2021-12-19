@@ -1,0 +1,22 @@
+{
+  "chrome": {
+    "default": "96.0",
+    "versions": {
+      "96.0": {
+        "image": "src/browsers/chromedriver",
+        "port": "4444"
+      }
+    }
+  },
+  "firefox": {
+    "default": "latest",
+    "versions": {
+      "latest": {
+        "image": "selenoid/firefox",
+        "port": "4444",
+        "path": "src/browsers/geckodriver"
+      }
+    }
+
+  }
+}
