@@ -1,5 +1,8 @@
 # flink_code_challenge
 
+# Intro
+  This repository contains a Selenium web based automation for the Flink QA challenge. The test case that the automation follows can be seen in AutomatedTestCase.md.
+  
 # Dependecies
 - Gradle
 - testng:7.4.0
