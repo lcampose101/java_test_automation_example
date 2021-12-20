@@ -31,9 +31,7 @@ dependencies {
 }
 
 test {
-    useTestNG(){
-        suites'src/test/resources/runlist/my_test_run.xml'
-    }
+    useTestNG()
 }
 allure {
     autoconfigure = true
