@@ -21,7 +21,7 @@ public class TestRunnerTest {
 
     @BeforeClass
     public static void setUpAll() {
-        Configuration.browserSize = "1400x900";
+        Configuration.browserSize = "1600x1000";
         Configuration.browser = "firefox";
         Configuration.headless = true;
         SelenideLogger.addListener("allure", new AllureSelenide());
@@ -39,8 +39,10 @@ public class TestRunnerTest {
 
     @Test
     @Description("The user access the homepage website and depending on the temperature will purchase different elements")
-    public void userDecidesProductPurchaseHomePage() throws InterruptedException {
+    public void userDecidesProductPurchaseHomePage() {
         homePageTest.userDecidesProductPurchaseHomePage();
     }
+
+
 
 }

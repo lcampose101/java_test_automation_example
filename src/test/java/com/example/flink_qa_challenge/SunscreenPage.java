@@ -11,10 +11,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.sql.SQLOutput;
 import java.util.*;
+
 
 import static com.codeborne.selenide.Condition.*;
 import static org.testng.Assert.*;
@@ -35,8 +38,8 @@ public ArrayList<SelenideElement> allProductElements = new ArrayList<>();
 
 //Variables that house selectors for the cart screen
 private SelenideElement cartBtn = $(By.xpath("//button[@onclick='goToCart()']"));
-private SelenideElement firstRowCheckout = $(By.cssSelector(".table > tbody:nth-child(2) > tr:nth-child(1)"));
-private SelenideElement secondRowCheckout = $(By.cssSelector(".table > tbody:nth-child(2) > tr:nth-child(2)"));
+private SelenideElement firstRowCheckoutElement = $(By.cssSelector(".table > tbody:nth-child(2) > tr:nth-child(1)"));
+private SelenideElement secondRowCheckoutElement = $(By.cssSelector(".table > tbody:nth-child(2) > tr:nth-child(2)"));
 private SelenideElement payWithCardBtn = $(By.xpath("//span[contains(.,'Pay with Card')]"));
 
 //Variables that are used for comparisons between methods outputs
@@ -63,11 +66,7 @@ public String getTitlesFromProducts(SelenideElement element){
         String productName = element.find(By.className("font-weight-bold")).getText();
         return productName;
 }
-
-public String getTitlesFromProductsCheckout(SelenideElement element ){
-        String productName = element.find(By.tagName("td")).getText();
-        return productName;
-}
+        //Method that retrieves the prices from each product and converts them to Int
 public int getPricesFromProducts(SelenideElement element){
         List<WebElement> pTagElements = element.findElements(By.tagName("p"));
         WebElement elementWithPrice = pTagElements.get(1);
@@ -81,16 +80,17 @@ public int getPricesFromProducts(SelenideElement element){
         return intPriceOfProduct;
 
 }
-
+        //Method that compares the products in order to retrieve the correct index that will aid in the Xpath selector for the button
 public SelenideElement compareProducts(SelenideElement element, String productToBuy){
         SelenideElement elementMatched = null;
-        String sunscreenProductText = getTitlesFromProducts(element);
-        sunscreenProductText = sunscreenProductText.toLowerCase();
-        if(sunscreenProductText.contains(productToBuy)){
+        String sunscreenProductText = getTitlesFromProducts(element).toLowerCase();
+        if(sunscreenProductText.equals(productToBuy)){
+                System.out.println("The elements that matched are"+sunscreenProductText.toString()+"and"+productToBuy);
                 elementMatched = element;
         }
         return  elementMatched;
 }
+        //Main method that determines which items have the lowest price from the qualifying conditions and adds them to the cart
 public void getValuesFromProductsAndAddToCart(){
 
         //Adding all of the SelenidElements that will be utilized for a comparison at the end of the script
@@ -140,6 +140,8 @@ public void getValuesFromProductsAndAddToCart(){
                         }else{
                                 if (key.contains("spf-50")){
                                         sunscreensSPF50.put(key,value);
+                                }else{
+                                        System.out.println("is not a valid product for this test scenario");
                                 }
                         }
                 }
@@ -161,24 +163,25 @@ public void getValuesFromProductsAndAddToCart(){
                 }
         }
 
+        //Adding to the variables nameOf the values that are returned from getting the Key from the hashmap
         String nameOfProductToAddSPF30 = minSPF30.getKey();
         String nameOfProductToAddSPF50 = minSPF50.getKey();
         System.out.println(nameOfProductToAddSPF30);
         System.out.println(nameOfProductToAddSPF50);
-        firstItemRowCheckout = nameOfProductToAddSPF30.toLowerCase();
-        secondItemRowCheckout = nameOfProductToAddSPF50.toLowerCase();
-        priceFirstItemRowCheckout = minSPF30.getValue().toString().toLowerCase();
-        priceSecondItemRowCheckout = minSPF50.getValue().toString().toLowerCase();
         SelenideElement spf30ProductSelected = null;
         SelenideElement spf50ProductSelected = null;
         int indexOfElementMatchedSPF30 = 0;
         int indexOfElementMatchedSPF50 = 0;
 
         for(int i = 0; i<allProductElements.size(); i++){
-                SelenideElement resultElement = compareProducts(allProductElements.get(i),nameOfProductToAddSPF30);
+                SelenideElement resultElement = compareProducts(allProductElements.get(i),nameOfProductToAddSPF30.toLowerCase());
                 if (resultElement!= null){
+                        System.out.println("Element is no longer null and it matched");
                         spf30ProductSelected = resultElement;
                         indexOfElementMatchedSPF30 = i;
+                        allProductElements.get(i).toString();
+                        firstItemRowCheckout = getTitlesFromProducts(allProductElements.get(i));
+                        System.out.println(firstItemRowCheckout);
                         break;
                 }
 
@@ -186,29 +189,40 @@ public void getValuesFromProductsAndAddToCart(){
         for(int i = 0; i<allProductElements.size(); i++){
                 SelenideElement resultElement = compareProducts(allProductElements.get(i),nameOfProductToAddSPF50);
                 if (resultElement!= null){
+                        System.out.println("Element is no longer null and it matched");
                         spf50ProductSelected = resultElement;
                         indexOfElementMatchedSPF50=i;
+                        allProductElements.get(i).toString();
+                        secondItemRowCheckout = getTitlesFromProducts(allProductElements.get(i));
+                        System.out.println(secondItemRowCheckout);
                         break;
                 }
 
         }
 
         try {
-                spf30ProductSelected.scrollIntoView(true);
+        // Code that scrolls the element to view, retrieves the value of the title, and access both the element that contains the title of the product and the add button
+                //in order to access the button it is necessary to use the Xpath and add the matching value as a variable previously defined
+
+                spf30ProductSelected.scrollIntoView("{ behavior: 'smooth', block: 'center' }");
                 String exactStringOfElementSPF30 = getTitlesFromProducts(spf30ProductSelected);
+                indexOfElementMatchedSPF30= indexOfElementMatchedSPF30+1;
                 SelenideElement interProductSPF30 = $(By.xpath("//p[@class='font-weight-bold top-space-10'][contains(.,'"+exactStringOfElementSPF30+"')]"));
                 SelenideElement addButtonSPF30 = $(By.xpath("(//button[@class='btn btn-primary'][contains(.,'Add')])["+indexOfElementMatchedSPF30+"]"));
                 interProductSPF30.click();
-                addButtonSPF30.scrollIntoView(true);
+                addButtonSPF30.scrollIntoView("{ behavior: 'smooth', block: 'center' }");
                 addButtonSPF30.shouldBe(visible);
                 addButtonSPF30.click();
 
-                spf50ProductSelected.scrollIntoView(true);
+
+                spf50ProductSelected.scrollIntoView("{ behavior: 'smooth', block: 'center' }");
                 String exactStringOfElementSPF50 = getTitlesFromProducts(spf30ProductSelected);
+                secondItemRowCheckout = exactStringOfElementSPF50;
+                indexOfElementMatchedSPF50 = indexOfElementMatchedSPF50+1;
                 SelenideElement interProductSPF50 = $(By.xpath("//p[@class='font-weight-bold top-space-10'][contains(.,'"+exactStringOfElementSPF50+"')]"));
                 SelenideElement addButtonSPF50 = $(By.xpath("(//button[@class='btn btn-primary'][contains(.,'Add')])["+indexOfElementMatchedSPF50+"]"));
                 interProductSPF50.click();
-                addButtonSPF50.scrollIntoView(true);
+                addButtonSPF50.scrollIntoView("{ behavior: 'smooth', block: 'center' }");
                 addButtonSPF50.shouldBe(visible);
                 addButtonSPF50.click();
 
@@ -216,37 +230,29 @@ public void getValuesFromProductsAndAddToCart(){
                 System.out.println(error);
         }
 }
-public boolean checkoutPricesCorrect(SelenideElement element, SelenideElement element2){
-        boolean pricesCorrect = false;
-        itemsReadyForCheckout.add(element.getText());
-        itemsReadyForCheckout.add(element2.getText());
+//Method that asserts that the item in the cart added are the correct ones
+public void checkoutPricesCorrect(SelenideElement element, SelenideElement element2){
 
-        if (itemsReadyForCheckout.contains(priceFirstItemRowCheckout)){
-                if (itemsReadyForCheckout.contains(priceSecondItemRowCheckout)){
-                        pricesCorrect = true;
-                }
-        }
-        return pricesCorrect;
+        String firstItemCheckout = element.getText();
+        String secondItemCheckout = element2.getText();
+        assertThat(firstItemCheckout).contains(priceFirstItemRowCheckout);
+        assertThat(secondItemCheckout).contains(priceSecondItemRowCheckout);
 }
-public boolean checkoutItemsCorrect(SelenideElement element, SelenideElement element2){
-        boolean productsCorrect = false;
-        String productNameFirstRow = getTitlesFromProductsCheckout(element).toLowerCase();
-        String productNameSecondRow = getTitlesFromProductsCheckout(element2).toLowerCase();
-        itemsReadyForCheckout.add(productNameFirstRow);
-        itemsReadyForCheckout.add(productNameSecondRow);
-        System.out.println(productNameFirstRow);
-        System.out.println(firstItemRowCheckout);
+///Method that asserts that the item in the cart added are the correct ones
+public void checkoutItemsCorrect(SelenideElement element, SelenideElement element2){
+        String firstItemCheckout = element.getText();
+        String secondItemCheckout = element2.getText();
+        assertThat(firstItemCheckout).contains(firstItemRowCheckout);
+        assertThat(secondItemCheckout).contains(secondItemRowCheckout);
+}
 
-        if (itemsReadyForCheckout.contains(firstItemRowCheckout)){
-                productsCorrect = true;
-        }
-        return productsCorrect;
-}
+        //Method that access the cart to do the asserts and access the form
 public void accessCart(){
+        cartBtn.shouldBe(visible);
         if (cartBtn.isDisplayed()){
                 try {
-                        
                         cartBtn.click();
+                        checkoutItemsCorrect(firstRowCheckoutElement,secondRowCheckoutElement);
                         payWithCardBtn.click();
 
                 }catch (Exception error){

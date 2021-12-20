@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.flink_qa_challenge.TestRunnerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-12-19T23:39:32" hostname="luis-zymewire" time="4.523">
+<testsuite name="com.example.flink_qa_challenge.TestRunnerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-12-20T01:27:50" hostname="luis-zymewire" time="4.933">
   <properties/>
-  <testcase name="userDecidesProductPurchaseHomePage" classname="com.example.flink_qa_challenge.TestRunnerTest" time="4.523"/>
-  <system-out><![CDATA[vassily brilliant spf-30
-gary bio sandalwood spf-50
+  <testcase name="userDecidesProductPurchaseHomePage" classname="com.example.flink_qa_challenge.TestRunnerTest" time="4.933"/>
+  <system-out><![CDATA[vassily aloe attack
+boris almond and honey
+The elements that matched arevassily aloe attackandvassily aloe attack
+Vassily Aloe Attack
+The elements that matched areboris almond and honeyandboris almond and honey
+Element is no longer null and it matched
+Boris Almond and Honey
+2
+4
+<div class="text-center col-4">Vassily Aloe Attack
+Price: Rs. 199
+Add</div>
+<div class="text-center col-4">Boris Almond and Honey
+Price: 128
+Add</div>
 order successful
 ]]></system-out>
-  <system-err><![CDATA[[Test worker] INFO com.codeborne.selenide.drivercommands.CloseDriverCommand - Close webdriver: 1 -> ChromeDriver: chrome on LINUX (55caf173e13f2a5d41e74ee6927b84dd)...
-[Test worker] INFO com.codeborne.selenide.drivercommands.CloseDriverCommand - Closed webdriver 1 in 80 ms
+  <system-err><![CDATA[[Test worker] INFO com.codeborne.selenide.drivercommands.CloseDriverCommand - Close webdriver: 1 -> ChromeDriver: chrome on LINUX (5bf4c5000d0a64e46bc7abd607e9ab90)...
+[Test worker] INFO com.codeborne.selenide.drivercommands.CloseDriverCommand - Closed webdriver 1 in 85 ms
 ]]></system-err>
 </testsuite>

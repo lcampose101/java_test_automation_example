@@ -1,1 +1,0 @@
-{"uuid":"f76c85da-1dd2-4109-a3cf-6cfe1b79f393","name":"com.example.flink_qa_challenge.TestRunnerTest","children":["3f842d61-c962-4345-a4dd-240e304c9b8c"],"befores":[{"name":"setUpAll","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1639956932892,"stop":1639956932894}],"afters":[],"start":1639956932874,"stop":1639956933168}

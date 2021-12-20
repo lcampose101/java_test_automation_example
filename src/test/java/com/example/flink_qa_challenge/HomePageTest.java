@@ -20,7 +20,7 @@ public class HomePageTest {
     MoisturizerPage moisturizerPage = new MoisturizerPage();
     @BeforeClass
     public static void setUpAll() {
-        Configuration.browserSize = "1280x800";
+        Configuration.browserSize = "1600x1000";
         Configuration.browser = "firefox";
         SelenideLogger.addListener("allure", new AllureSelenide());
     }
