@@ -217,7 +217,6 @@ public void getValuesFromProductsAndAddToCart(){
 
                 spf50ProductSelected.scrollIntoView("{ behavior: 'smooth', block: 'center' }");
                 String exactStringOfElementSPF50 = getTitlesFromProducts(spf30ProductSelected);
-                secondItemRowCheckout = exactStringOfElementSPF50;
                 indexOfElementMatchedSPF50 = indexOfElementMatchedSPF50+1;
                 SelenideElement interProductSPF50 = $(By.xpath("//p[@class='font-weight-bold top-space-10'][contains(.,'"+exactStringOfElementSPF50+"')]"));
                 SelenideElement addButtonSPF50 = $(By.xpath("(//button[@class='btn btn-primary'][contains(.,'Add')])["+indexOfElementMatchedSPF50+"]"));
