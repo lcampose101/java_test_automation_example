@@ -1,7 +1,7 @@
 # flink_code_challenge
 
 # Intro
-  This repository contains a Selenium web based automation for the Flink QA challenge. The test case that the automation follows can be seen in AutomatedTestCase.md.
+  This repository contains a Selenium web based automation. The test case that the automation follows can be seen in AutomatedTestCase.md.
   
 # Dependecies
 - Gradle
@@ -30,8 +30,6 @@ If you want to run them from the terminal, you will need to execute the followin
 # Review Test Reports
 For reviewing the test reports that are generated, you can follow this path: build/reports/index.html
 
-
-Thanks for taking the time of reviewing the code that I've presented for the challenge. Had a lot of fun coding all of this and would like for us to talk further and discuss it!
 
 Cheers,
 Luis
