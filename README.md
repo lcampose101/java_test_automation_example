@@ -1,4 +1,4 @@
-# flink_code_challenge
+# Java Test Automation Example
 
 # Intro
   This repository contains a Selenium web based automation. The test case that the automation follows can be seen in AutomatedTestCase.md.
